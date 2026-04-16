@@ -1,1 +1,7 @@
 .hermes/
+__pycache__/
+*.pyc
+infra/honcho/.env
+infra/honcho/codex_bridge/.venv/
+infra/honcho/codex_bridge/.pytest_cache/
+vendor/honcho/

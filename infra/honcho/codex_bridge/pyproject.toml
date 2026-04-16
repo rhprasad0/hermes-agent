@@ -1,0 +1,29 @@
+[project]
+name = "codex-bridge"
+version = "0.1.0"
+description = "Local OpenAI-compatible bridge for Honcho backed by Codex OAuth"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn>=0.32.0",
+  "openai>=1.99.7",
+  "httpx>=0.27.0",
+  "pydantic>=2.9.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["codex_bridge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
