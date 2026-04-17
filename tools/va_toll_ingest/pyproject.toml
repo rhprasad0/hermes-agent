@@ -1,0 +1,24 @@
+[project]
+name = "va-toll-ingest"
+version = "0.1.0"
+description = "Poll and store VDOT I-95/I-495 toll pricing data"
+requires-python = ">=3.11"
+dependencies = [
+  "psycopg[binary]>=3.2.9",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["va_toll_ingest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

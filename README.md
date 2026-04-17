@@ -43,5 +43,7 @@ Completed:
 - `infra/honcho/codex_bridge/`
 - `docs/runbooks/honcho-memory.md`
 - `docs/runbooks/codex-bridge.md`
+- `docs/runbooks/va-tolling-ingest.md`
+- `docs/schemas/va-i95-i495-trip-pricing.md`
 - `scripts/fetch-honcho-source.sh`
 - `scripts/honcho-smoke-test.sh`
