@@ -36,6 +36,62 @@ Completed:
 - nightly backup + S3 upload + restore drill have been configured for the Honcho database
 - the older `pgvector-local` container, backup cron, and Docker volume were removed
 
+## Slack channel isolation with Honcho
+
+This install also supports Slack channels with their own prompt, session behavior, and Honcho memory scope.
+
+Current pattern:
+- keep Hermes source changes in `~/.hermes/hermes-agent`
+- keep live operator config in `~/.hermes/config.yaml`
+- keep Honcho memory provider config in `~/.hermes/honcho.json`
+- use one Honcho workspace, but scope peers/sessions by gateway metadata instead of creating one Honcho workspace per Slack channel
+
+For a shared-room Slack channel such as `#budget`, the local config can combine three layers:
+
+1. Channel prompt in `~/.hermes/config.yaml`
+2. Shared session override for just that Slack channel
+3. Channel-scoped Honcho peer/assistant memory in `~/.hermes/honcho.json`
+
+Example local config:
+
+```yaml
+slack:
+  channel_prompts:
+    C_BUDGET_CHANNEL_ID: |
+      You are Hermes in the #budget Slack channel.
+      Treat this room as a shared budgeting workspace.
+      Prefer explicit assumptions, simple arithmetic, and actionable next steps.
+  shared_session_channels:
+    - C_BUDGET_CHANNEL_ID
+  free_response_channels:
+    - C_BUDGET_CHANNEL_ID
+
+group_sessions_per_user: true
+thread_sessions_per_user: false
+```
+
+```json
+{
+  "enabled": true,
+  "workspace": "hermes-local",
+  "gatewayPeerScope": "channel",
+  "gatewayAssistantScope": "channel",
+  "gatewayScopeIncludeWorkspace": true
+}
+```
+
+What this does:
+- `channel_prompts` gives the room its own operating instructions
+- `shared_session_channels` makes top-level conversation state shared for that Slack channel without changing every other channel
+- `free_response_channels` lets Hermes answer in that room without requiring `@mention`
+- `group_sessions_per_user: true` preserves per-user isolation everywhere else by default
+- `thread_sessions_per_user: false` keeps Slack threads shared by default
+- channel-scoped Honcho settings keep long-term memory from bleeding across channels or workspaces
+
+Operational note:
+- `~/.hermes/*` is local machine state and is not tracked in this repo
+- after changing local Hermes config or gateway code, restart the gateway service so Slack picks up the new behavior
+
 ## Key paths
 
 - `infra/honcho/docker-compose.yml`
@@ -43,6 +99,7 @@ Completed:
 - `infra/honcho/codex_bridge/`
 - `docs/runbooks/honcho-memory.md`
 - `docs/runbooks/codex-bridge.md`
+- `docs/runbooks/slack-channel-isolation-honcho.md`
 - `docs/runbooks/va-tolling-ingest.md`
 - `docs/schemas/va-i95-i495-trip-pricing.md`
 - `scripts/fetch-honcho-source.sh`
