@@ -1,0 +1,25 @@
+[project]
+name = "ynab-mcp"
+version = "0.1.0"
+description = "Read-only YNAB MCP server for Hermes budgeting workflows"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx>=0.28.0",
+  "mcp>=1.9.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ynab_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

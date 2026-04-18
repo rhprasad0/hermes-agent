@@ -92,6 +92,24 @@ Operational note:
 - `~/.hermes/*` is local machine state and is not tracked in this repo
 - after changing local Hermes config or gateway code, restart the gateway service so Slack picks up the new behavior
 
+## YNAB budget channel integration
+
+This repo also includes a small YNAB MCP server for the Slack budget channel workflow.
+
+Pattern:
+- keep the real YNAB token in a local file such as `~/.config/hermes-ynab/ynab.env`
+- register the MCP server from `tools/ynab_mcp/` in `~/.hermes/config.yaml`
+- point the budget channel prompt at the YNAB MCP tools
+- use the same YNAB MCP tools for both read workflows and explicit write requests in the budget channel
+- use a YOLO-lite policy for explicit writes: execute clearly worded requests directly, ask only when matching is ambiguous or the intended change is unclear
+- keep Honcho memory channel-scoped so budget-channel memory stays in the budget channel
+
+See:
+- `tools/ynab_mcp/README.md`
+- `config/ynab.env.example`
+- `docs/runbooks/ynab-budget-channel.md`
+- `docs/runbooks/hermes-chat-abort-honcho-prefetch.md`
+
 ## Key paths
 
 - `infra/honcho/docker-compose.yml`
@@ -100,7 +118,11 @@ Operational note:
 - `docs/runbooks/honcho-memory.md`
 - `docs/runbooks/codex-bridge.md`
 - `docs/runbooks/slack-channel-isolation-honcho.md`
+- `docs/runbooks/ynab-budget-channel.md`
+- `docs/runbooks/hermes-chat-abort-honcho-prefetch.md`
 - `docs/runbooks/va-tolling-ingest.md`
 - `docs/schemas/va-i95-i495-trip-pricing.md`
+- `config/ynab.env.example`
+- `tools/ynab_mcp/`
 - `scripts/fetch-honcho-source.sh`
 - `scripts/honcho-smoke-test.sh`

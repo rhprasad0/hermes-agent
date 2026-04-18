@@ -6,4 +6,6 @@ infra/honcho/codex_bridge/.venv/
 infra/honcho/codex_bridge/.pytest_cache/
 tools/va_toll_ingest/.venv/
 tools/va_toll_ingest/.pytest_cache/
+tools/ynab_mcp/.venv/
+tools/ynab_mcp/.pytest_cache/
 vendor/honcho/
