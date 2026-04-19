@@ -92,29 +92,35 @@ Operational note:
 - `~/.hermes/*` is local machine state and is not tracked in this repo
 - after changing local Hermes config or gateway code, restart the gateway service so Slack picks up the new behavior
 
-## YNAB budget channel integration
+## Budget bot — YNAB + Slack channel
 
-This repo also includes a small YNAB MCP server for the Slack budget channel workflow.
+A dedicated Slack channel where Hermes becomes the primary interface to YNAB: answering budget questions from live data, logging transactions, adjusting category budgets, and coaching spending decisions — all without opening YNAB directly.
 
-Pattern:
-- keep the real YNAB token in a local file such as `~/.config/hermes-ynab/ynab.env`
-- register the MCP server from `tools/ynab_mcp/` in `~/.hermes/config.yaml`
-- point the budget channel prompt at the YNAB MCP tools
-- use the same YNAB MCP tools for both read workflows and explicit write requests in the budget channel
-- use a YOLO-lite policy for explicit writes: execute clearly worded requests directly, ask only when matching is ambiguous or the intended change is unclear
-- keep Honcho memory channel-scoped so budget-channel memory stays in the budget channel
+### Components
 
-See:
-- `tools/ynab_mcp/README.md`
-- `config/ynab.env.example`
-- `docs/runbooks/ynab-budget-channel.md`
-- `docs/runbooks/hermes-chat-abort-honcho-prefetch.md`
+- **MCP server** (`tools/ynab_mcp/`) — Python package wrapping the YNAB API as MCP tools (read + narrow write surface)
+- **Channel prompt** — controls tone, behavior, write policy (coach vs. clerk, YOLO-lite vs. always-confirm)
+- **Memory scoping** — Honcho channel isolation so budget context stays in the budget channel
+- **Local secrets** — YNAB token in `~/.config/hermes-ynab/ynab.env` (never committed)
+
+### Customization
+
+The full specification for building and customizing the budget bot is in `docs/specs/budget-bot.md`. It covers MCP server behavior, Hermes config, write policy, prompt customization, Slack formatting rules, testing, security, and YNAB v2 migration notes.
+
+### Quick links
+
+- `docs/specs/budget-bot.md` — customization spec (hand to a coding agent)
+- `tools/ynab_mcp/README.md` — MCP server setup and usage
+- `config/ynab.env.example` — placeholder env file
+- `docs/runbooks/ynab-budget-channel.md` — operational runbook
+- `docs/runbooks/hermes-chat-abort-honcho-prefetch.md` — Honcho shutdown fix
 
 ## Key paths
 
 - `infra/honcho/docker-compose.yml`
 - `infra/honcho/.env.example`
 - `infra/honcho/codex_bridge/`
+- `docs/specs/budget-bot.md`
 - `docs/runbooks/honcho-memory.md`
 - `docs/runbooks/codex-bridge.md`
 - `docs/runbooks/slack-channel-isolation-honcho.md`

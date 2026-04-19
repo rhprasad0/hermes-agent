@@ -46,4 +46,37 @@ When editing this repository:
 
 This repo should be safe to open in public, safe to share, and safe to fork.
 
-That means no secret sauce, no accidental diary entries, and no surprise identity leaks hiding in “just an example” data.
+That means no secret sauce, no accidental diary entries, and no surprise identity leaks hiding in "just an example" data.
+
+## Budget bot — agent working notes
+
+This repo includes a YNAB MCP server (`tools/ynab_mcp/`) and a customization spec (`docs/specs/budget-bot.md`) for a Slack budget channel integration. If you are modifying code related to the budget bot, keep these constraints in mind:
+
+### No secrets or financial data
+
+- The YNAB access token lives in a local file outside the repo (e.g., `~/.config/hermes-ynab/ynab.env`)
+- Never commit a real token, real account names, real transaction amounts, or real category names into tests, fixtures, or examples
+- Use `YOUR_YNAB_PAT_HERE` in `config/ynab.env.example` and synthetic data in tests
+- Slack channel IDs in docs and specs use `C_BUDGET_CHANNEL_ID` as a placeholder; real IDs go in local config only
+
+### MCP server constraints
+
+- The MCP server is a **small, intentional surface**: read tools + single-item write tools (create transaction, update transaction, set category budget). Do not add bulk operations, deletes, or account-management endpoints without explicit direction
+- Amounts are normal currency units in the tool interface; conversion to milliunits happens inside `client.py`
+- Name resolution (accounts, categories) goes: exact match → case-insensitive partial → error on ambiguity. Never guess silently
+- The server targets YNAB API v1 (`api.ynab.com/v1`). A v2 migration is noted in the spec but has not been implemented
+
+### Write policy
+
+- The budget bot uses YOLO-lite: execute clearly worded write requests directly; ask when matching is ambiguous
+- This policy lives in the channel prompt (local config), not in the MCP server code. The server itself has no confirmation logic — it just executes
+- If you add new write tools, do not build server-side confirmation into them. Confirmation behavior belongs in the agent prompt, not the API wrapper
+
+### Slack formatting
+
+- Slack does not render markdown tables. Any tabular data must go inside triple-backtick code blocks
+- Never generate `<table>` HTML or bare pipe-delimited tables outside code blocks
+
+### Spec reference
+
+See `docs/specs/budget-bot.md` for the full customization specification.
